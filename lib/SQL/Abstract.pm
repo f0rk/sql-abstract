@@ -1588,7 +1588,7 @@ SELECT some data based on this criteria:
 
     my %where = (
        requestor => 'inna',
-       worker => ['nwiger', 'rcwe', 'sfz'],
+       worker => ['nathan', 'rcwe', 'sfz'],
        status => { '!=', 'completed' }
     );
 
@@ -1599,7 +1599,7 @@ The above would give you something like this:
     $stmt = "SELECT * FROM tickets WHERE
                 ( requestor = ? ) AND ( status != ? )
                 AND ( worker = ? OR worker = ? OR worker = ? )";
-    @bind = ('inna', 'completed', 'nwiger', 'rcwe', 'sfz');
+    @bind = ('inna', 'completed', 'nathan', 'rcwe', 'sfz');
 
 Which you could then use in DBI code like so:
 
@@ -1640,16 +1640,16 @@ Any setting other than 'lower' is ignored.
 This determines what the default comparison operator is. By default
 it is C<=>, meaning that a hash like this:
 
-    %where = (name => 'nwiger', email => 'nate@wiger.org');
+    %where = (name => 'nathan', email => 'nate@wiger.org');
 
 Will generate SQL like this:
 
-    WHERE name = 'nwiger' AND email = 'nate@wiger.org'
+    WHERE name = 'nathan' AND email = 'nate@wiger.org'
 
 However, you may want loose comparisons by default, so if you set
 C<cmp> to C<like> you would get SQL such as:
 
-    WHERE name like 'nwiger' AND email like 'nate@wiger.org'
+    WHERE name like 'nathan' AND email like 'nate@wiger.org'
 
 You can also override the comparsion on an individual basis - see
 the huge section on L</"WHERE CLAUSES"> at the bottom.
@@ -1989,28 +1989,28 @@ of the other functions as well, as described above.
 So, let's get started. To begin, a simple hash:
 
     my %where  = (
-        user   => 'nwiger',
+        user   => 'nathan',
         status => 'completed'
     );
 
 Is converted to SQL C<key = val> statements:
 
     $stmt = "WHERE user = ? AND status = ?";
-    @bind = ('nwiger', 'completed');
+    @bind = ('nathan', 'completed');
 
 One common thing I end up doing is having a list of values that
 a field can be in. To do this, simply specify a list inside of
 an arrayref:
 
     my %where  = (
-        user   => 'nwiger',
+        user   => 'nathan',
         status => ['assigned', 'in-progress', 'pending'];
     );
 
 This simple code will create the following:
 
     $stmt = "WHERE user = ? AND ( status = ? OR status = ? OR status = ? )";
-    @bind = ('nwiger', 'assigned', 'in-progress', 'pending');
+    @bind = ('nathan', 'assigned', 'in-progress', 'pending');
 
 A field associated to an empty arrayref will be considered a
 logical false and will generate 0=1.
@@ -2020,19 +2020,19 @@ logical false and will generate 0=1.
 If the value part is C<undef> then this is converted to SQL <IS NULL>
 
     my %where  = (
-        user   => 'nwiger',
+        user   => 'nathan',
         status => undef,
     );
 
 becomes:
 
     $stmt = "WHERE user = ? AND status IS NULL";
-    @bind = ('nwiger');
+    @bind = ('nathan');
 
 To test if a column IS NOT NULL:
 
     my %where  = (
-        user   => 'nwiger',
+        user   => 'nathan',
         status => { '!=', undef },
     );
     
@@ -2042,14 +2042,14 @@ If you want to specify a different type of operator for your comparison,
 you can use a hashref for a given column:
 
     my %where  = (
-        user   => 'nwiger',
+        user   => 'nathan',
         status => { '!=', 'completed' }
     );
 
 Which would generate:
 
     $stmt = "WHERE user = ? AND status != ?";
-    @bind = ('nwiger', 'completed');
+    @bind = ('nathan', 'completed');
 
 To test against multiple values, just enclose the values in an arrayref:
 
@@ -2064,31 +2064,31 @@ The hashref can also contain multiple pairs, in which case it is expanded
 into an C<AND> of its elements:
 
     my %where  = (
-        user   => 'nwiger',
+        user   => 'nathan',
         status => { '!=', 'completed', -not_like => 'pending%' }
     );
 
     # Or more dynamically, like from a form
-    $where{user} = 'nwiger';
+    $where{user} = 'nathan';
     $where{status}{'!='} = 'completed';
     $where{status}{'-not_like'} = 'pending%';
 
     # Both generate this
     $stmt = "WHERE user = ? AND status != ? AND status NOT LIKE ?";
-    @bind = ('nwiger', 'completed', 'pending%');
+    @bind = ('nathan', 'completed', 'pending%');
 
 
 To get an OR instead, you can combine it with the arrayref idea:
 
     my %where => (
-         user => 'nwiger',
+         user => 'nathan',
          priority => [ { '=', 2 }, { '>', 5 } ]
     );
 
 Which would generate:
 
     $stmt = "WHERE ( priority = ? OR priority > ? ) AND user = ?";
-    @bind = ('2', '5', 'nwiger');
+    @bind = ('2', '5', 'nathan');
 
 If you want to include literal SQL (with or without bind values), just use a
 scalar reference or array reference as the value:
@@ -2192,7 +2192,7 @@ Another pair of operators is C<-between> and C<-not_between>,
 used with an arrayref of two values:
 
     my %where  = (
-        user   => 'nwiger',
+        user   => 'nathan',
         completion_date => {
            -not_between => ['2002-10-01', '2003-02-06']
         }
@@ -2270,7 +2270,7 @@ hashes and then putting those hashes in an array. For example:
 
     my @where = (
         {
-            user   => 'nwiger',
+            user   => 'nathan',
             status => { -like => ['pending%', 'dispatched'] },
         },
         {
@@ -2283,7 +2283,7 @@ This data structure would create the following:
 
     $stmt = "WHERE ( user = ? AND ( status LIKE ? OR status LIKE ? ) )
                 OR ( user = ? AND status = ? ) )";
-    @bind = ('nwiger', 'pending', 'dispatched', 'robot', 'unassigned');
+    @bind = ('nathan', 'pending', 'dispatched', 'robot', 'unassigned');
 
 
 Clauses in hashrefs or arrayrefs can be prefixed with an C<-and> or C<-or>
@@ -2291,7 +2291,7 @@ to change the logic inside :
 
     my @where = (
          -and => [
-            user => 'nwiger',
+            user => 'nathan',
             [
                 -and => [ workhrs => {'>', 20}, geo => 'ASIA' ],
                 -or => { workhrs => {'<', 50}, geo => 'EURO' },
